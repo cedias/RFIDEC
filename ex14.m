@@ -13,7 +13,7 @@ moy = mean(notes);
 
 
 %coeff
-Coeff = cov(notes(:,1),notes(:,2))/(var(notes(:,1))*var(notes(:,2)));
+Coeff = cov(notes(:,1),notes(:,2))/(std(notes(:,1))*std(notes(:,2)));
 
 %plot
 figure
@@ -22,7 +22,7 @@ hold on;
 %changement
 exCoeff = Coeff;
 notes = [40 70;notes];
-Coeff = cov(notes(:,1),notes(:,2))/(var(notes(:,1))*var(notes(:,2)));
+Coeff = cov(notes(:,1),notes(:,2))/(std(notes(:,1))*std(notes(:,2)));
 [exCoeff Coeff]
 
 plot(notes(1,1),notes(1,2),"r+");
