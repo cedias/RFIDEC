@@ -23,19 +23,19 @@ PyJoin = sum(Px_E_y)
 PzJoin = sum(Px_E_z)
 
 %3
-Pxyz = zeros(2,3,2);
-for i = 1 : 2
-  for j = 1 : 3
-    for k = 1 : 2
-      Pxyz(i,j,k)=Px(i)*Py_x(i,j)*Pz_x(i,j);
-      end
-    end
- end
-PxEz = sum(Pxyz,1);
+%Pxyz = zeros(2,3,2);
+%for i = 1 : 2
+ % for j = 1 : 3
+  %  for k = 1 : 2
+   %   Pxyz(i,j,k)=Px(i)*Py_x(i,j)*Pz_x(i,j);
+    %  end
+   % end
+ %end
+%PxEz = sum(Pxyz,1);
 
 
 
 %4
-indPxPy = (sum(sum(Px_E_y - Px' * Py)))**2 
-indPxPz = (sum(sum(Px_E_z - Px' * Pz)))**2 
-indPyPz = (sum(sum(Py_E_z - Py' * Pz)))**2 
+%indPxPy = (sum(sum(Px_E_y - Px' * Py)))**2 
+%indPxPz = (sum(sum(Px_E_z - Px' * Pz)))**2 
+%indPyPz = (sum(sum(Py_E_z - Py' * Pz)))**2 
