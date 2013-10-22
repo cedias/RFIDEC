@@ -66,24 +66,39 @@ for i=1 : 1000
   Zcond = [Zcond echantillon(1,Py_x(Xcond(i),:))];
 end;
 
-function [chiSq] = calculChiSq(cont)
-  droite = sum(cont,2);
-  bas = sum(cont);
-  total = sum(bas);
+%marginales
+loiXC = estimation(Xcond);
+loiYC = estimation(Ycond);
+loiZC = estimation(Zcond);
 
-  theorie = droite*bas;
-  theorie = theorie./total;
+%lois jointes
+loiJXY = loiXC' * loiYC; 
+loiJXZ = loiXC' * loiZC; 
+loiJYZ = loiYC' * loiZC;
 
-  diff = (((cont - theorie).*(cont - theorie))./theorie);
-  chiSq = sum(sum(diff));
+contJXY = loiJXY*1000;%theorie
+contJXZ = loiJXZ*1000;
+contJYZ = loiJYZ*1000;
+
+contJXYp = table(Xcond,Ycond);%pratique
+contJXZp = table(Xcond,Zcond);
+contJYZp = table(Ycond,Zcond);
+
+function [chisq,deg] =  chisq(pratique,theorie)
+  cont = (((pratique - theorie).*(pratique - theorie))./theorie);
+  chisq = sum(sum(cont));
+  deg = prod((size(pratique)-1));
 endfunction
 
-%echantillon indépendants (theorie)
-XY= [X' Y']; 
-XZ= [X' Z'];
-ZY= [Z' Y'];
 
-%echantillon conditionnel (Pratique)
-XYcond = [Xcond' Ycond'];
-XZcond = [Xcond' Zcond'];
-ZYcond = [Zcond' Ycond'];
+[a d] = chisq(contJXYp,contJXY);
+[b d2] = chisq(contJXZp,contJXZ);
+[c d3] = chisq(contJYZp,contJYZ);
+
+%pour verifier
+[x a2 dbis] = chisquare_test_independence(table(Xcond,Ycond));
+[x b2 d2bis] = chisquare_test_independence(table(Xcond,Zcond));
+[x c2 d3bis] = chisquare_test_independence(table(Ycond,Zcond));
+
+%affichage final
+[ a d b d2 c d3 ; a2 dbis b2 d2bis c2 d3bis]
