@@ -33,7 +33,7 @@ nbPertes = sum(VectAlea);
 nbWin = 5000-nbPertes;
 
 disp("\n44.1");
-gainMoyen = (nbWin-nbPertes)/5000
+gainMoyen = (nbWin-nbPertes)/5000           %----REPONSE 44.1
 
 
 %44.2
@@ -63,7 +63,8 @@ end
 
 %cont -> proba
 matF1 = matF1./sum(sum(sum(matF1))); 
-matF2 = matF2./sum(sum(sum(matF2)));
+matF2 = matF2./sum(sum(sum(matF2))); 
+disp("\n44.2  dans Variables => matF1 et matF2");   %----REPONSE 44.2
 
 %44.3
 
@@ -91,7 +92,7 @@ vect = mise'- vect(:,4);
 vect( vect !=  0 ) = 1;
 nbPertes = sum(vect);
 
-disp("\n44.2 - 1000 apprentissage");
+disp("\n44.3 - 1000 apprentissage");    %----REPONSE 44.3
 nbWin = 1000-nbPertes
 
 %4000 restant
@@ -116,12 +117,87 @@ end
 jeu = mise'- jeu(:,4);
 jeu( jeu !=  0 ) = 1;
 nbPertes = sum(jeu);
-disp("\n44.2 - 4000 test");
+disp("\n44.3 - 4000 base de test");      %----REPONSE 44.3
 nbWin = 4000-nbPertes
 
 %44.4
-
 %on veut passer la 3eme dim de 37 à 6
+matF1b = cat(3,... %concatenation sur 3 dimensions
+              sum(matF1(:,:,1:6),3),...
+              sum(matF1(:,:,7:12),3),...
+              sum(matF1(:,:,13:19),3),...
+              sum(matF1(:,:,20:26),3),...
+              sum(matF1(:,:,27:33),3),...
+              sum(matF1(:,:,34:37),3)
+            );
 
-%idée; sommer 6 par 6 les 3emes dimensions
-%sum(matF1(:,:,1:6),3)
+matF2b = cat(3,... %concatenation sur 3 dimensions
+              sum(matF2(:,:,1:6),3),...
+              sum(matF2(:,:,7:12),3),...
+              sum(matF2(:,:,13:19),3),...
+              sum(matF2(:,:,20:26),3),...
+              sum(matF2(:,:,27:33),3),...
+              sum(matF2(:,:,34:37),3)
+            );
+
+%gain sur 1000 ech d'apprentissage:
+
+ech = data(1:1000,1:4);
+mise = [];
+
+for i=1 : 1000
+  a = ech(i,1);
+  b = ech(i,2);
+  c = floor(ech(i,3)/6)+1; % si cl=0
+  if(c == 7)
+    c=6;
+  end;
+
+  F1 = matF1b(a,b,c);
+  F2 = matF2b(a,b,c);
+
+  if(F1>=F2)
+    mise = [mise 1];
+  else
+    mise = [mise 2];
+   end
+end
+
+ech = mise'- ech(:,4);
+ech( ech !=  0 ) = 1;
+nbPertes = sum(ech);
+disp("\n44.4 - 1000 echantillons");    %----REPONSE 44.4
+nbWin = 1000-nbPertes
+
+%gain sur 4000 ech restant:
+
+ech = data(1001:5000,1:4);
+mise = [];
+
+for i=1 : 4000
+  a = ech(i,1);
+  b = ech(i,2);
+  c = floor(ech(i,3)/6)+1; % si cl=0
+  if(c == 7)
+    c=6;
+  end;
+
+  F1 = matF1b(a,b,c);
+  F2 = matF2b(a,b,c);
+
+  if(F1>=F2)
+    mise = [mise 1];
+  else
+    mise = [mise 2];
+   end
+end
+
+ech = mise'- ech(:,4);
+ech( ech !=  0 ) = 1;
+nbPertes = sum(ech);
+disp("\n44.4 - 4000 echantillons");    %----REPONSE 44.4
+nbWin = 4000-nbPertes
+
+%44.6
+
+%44.6.1 
