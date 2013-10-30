@@ -2,11 +2,11 @@
 
 if [ $# -ne 2 ]; then
 	
-	if [ ! -f ex$1.m ]; then
-		echo "close all;\nclear all;\n %Exercice n°$1" > ex$1.m
+	if [ ! -f $1.m ]; then
+		echo "close all;\nclear all;\n %Exercice n°$1" > $1.m
 	else
-		echo "Exercice $1 already exists: ex$1.m"
+		echo "Exercice $1 already exists: $1.m"
 	fi
 else
-echo "Syntax: ./new <exercice-number>"
+echo "Syntax: ./new <exercice-name>"
 fi
