@@ -70,7 +70,7 @@ disp("\n44.2  dans Variables => matF1 et matF2");   %----REPONSE 44.2
 
 %1000 apprentissage: vect(1:3)
 
-appr = vect(:,1:3); %sans les resultats
+appr = data(:,1:3); %sans les resultats
 
 mise = [];
 for i=1 : 1000
@@ -201,3 +201,44 @@ nbWin = 4000-nbPertes
 %44.6
 
 %44.6.1 
+
+%44.6.2
+
+function [VRR VL CL F] = genererDonnees(N)
+  VRR = binornd(2,0.5,N,1);
+  VL = binornd(4,0.5,N,1);
+  CL = round(rand(N,1).*37);
+  F=[];
+  for i=1 : N
+  vitesseRotation = 0.2+VRR(i); % vitesse VRR
+  nbTour = 0.2+VL(i); % nb tour de la bille suite 
+                             % a la vitesse de lancé
+
+  precisionMesureVRR = 0.01; 
+  precisionVitesseVL = 0.005;
+  precisionCL= 1;
+
+  nbTours = (vitesseRotation+randn(1,1)*(precisionMesureVRR*3)) .* (nbTour+randn(1,1)*(precisionVitesseVL*3));
+  chiffre = (nbTours-floor(nbTours))*36;
+  Ftemp = round(CL(i)+randn(1,1)*precisionCL*3 + chiffre);
+  F = [F ;mod(Ftemp, 37)];
+  end
+
+endfunction
+
+[a b c d] = genererDonnees(1000);
+tirage = [a b c d];
+
+%44.6.3
+
+distrib = hist(d,unique(d));
+uDistrib = zeros(1,37)+(1000/37);
+
+function [chiSq] = calculChiSq(cont,theorie)
+  diff = (((cont - theorie).*(cont - theorie))./theorie);
+  chiSq = sum(sum(diff));
+endfunction
+
+disp("\n44.6.3 - 1000 tirage - 36 degré de liberté ");    %----REPONSE 44.6.3
+chisq = calculChiSq(distrib,uDistrib)
+chiMax = chi2inv(0.95,36)
