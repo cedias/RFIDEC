@@ -1,5 +1,6 @@
 close all;
 clear all;
+disp("\n\n");
 %Exercices:tp 7-2
 
 
@@ -46,21 +47,78 @@ yval = [];
  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
+function [erreurMC] = erreurMC(Y,Ybis)
+  erreurMC = sum((Y - Ybis).*(Y-Ybis))/size(Y)(1);
+endfunction
+
+function [erreurP] = erreurP(Y,Ybis)
+  erreurP = sum((abs(Y-Ybis)./Y)*100)/size(Y)(1);
+endfunction
 
 
+%%%%%%%%%%%%%%%%%%%%%--Beton---%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% sauvegarder une image: print("-dpdf","image.pdf")
+
+%constante
+PART = 3;
+
+%programme
 data = load("data/donneesConcrete.dat");
-X = data(:,1:5);
-Y = data(:,6);
+datasize = size(data)(1);
+perm = randperm(datasize);
+data = data(perm,:);
+X = data(:,1:end-1);
+Y = data(:,end);
  
 w = (X'*X) \ (X'*Y);
+
+figure(42);
 plot(X,Y,"r+");
 hold on;
-
 
 Ybis = X*w;
 plot(X,Ybis,"g*");
 
-= crossval(X,Y,3,1);
+disp('=DATA Beton==========================================================');
+disp('MC = Erreur au sens des moindres carrés');
+disp('PC = Erreur en pourcentage');
+disp("==================Erreur Théorique===================================");
+MC = erreurMC(Y,Ybis)
+PC = erreurP(Y,Ybis)
 
+disp("==============================Erreur=================================");
 
+muMC = 0;
+muPC = 0;
 
+for i=1 : PART
+  [xapp yapp xval yval] = crossval(X,Y,PART,i);
+
+  w2 = (xapp'*xapp)\(xapp'*yapp);
+  ytrouve = xval*w2;
+
+  ymodele = xapp*w2;
+
+  figure(i);
+  plot(xval,yval,"b*");
+  hold on;
+  plot(xval,ytrouve,"r+");
+
+  disp(i)
+  disp("=Erreur Apprentissage:");
+  MC = erreurMC(yapp,ymodele)
+  PC = erreurP(yapp,ymodele)
+
+  disp("=Erreur Test:");
+  MC = erreurMC(yval,ytrouve)
+  PC = erreurP(yval,ytrouve)
+
+  muMC = MC + muMC;
+  muPC = PC + muPC;
+
+  disp("\n");
+end
+
+disp("===========================En moyenne ==============================");
+MC = muMC/PART
+PC = muPC/PART

@@ -1,0 +1,7 @@
+-> Regression Multiple
+ -> Evaluation des performances
+ ->APP/TEST
+ -> Graphique
+
+-> Descente de gradient
+   -> illustration
