@@ -55,41 +55,82 @@ function [erreurP] = erreurP(Y,Ybis)
   erreurP = sum((abs(Y-Ybis)./Y)*100)/size(Y)(1);
 endfunction
 
+function [erreurEC] = erreurEC(Y,Ybis)
+  erreurEC = sum(abs(Y-Ybis))/size(Y)(1);
+endfunction
+
+function [erreurE05] = erreurE05(Y,Ybis)
+  e = abs(Y-Ybis);
+  indexNe = find(e<=0.5);
+  indexEr = find(e>0.5);
+  
+  e(indexNe)=0;
+  e(indexEr)=1;
+  erreurE05 = sum(e);
+endfunction
+
 
 %%%%%%%%%%%%%%%%%%%%%--vin---%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % sauvegarder une image: print("-dpdf","image.pdf")
 
 %constante
-PART = 3;
+PART = 50;
+FIG = 0;
+DETAIL = 0;
 
 %programme
-data = load("data/winequality-red.csv");
-datasize = size(data)(1);
+dataRed = load("data/winequality-red.csv");
+dataWhite = load("data/winequality-white.csv");
+datasize = size(dataRed)(1);
+datasize2 = size(dataWhite)(1);
 perm = randperm(datasize);
-data = data(perm,:);
+data = dataRed(perm,:);
+data2 = dataWhite(perm,:);
 X = data(:,1:end-1);
+X2 = data2(:,1:end-1);
 Y = data(:,end);
+Y2 = data2(:,end);
+
+%data = RED
+%data2 = WHITE
  
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%VIN ROUGE%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 w = (X'*X) \ (X'*Y);
-
-figure(42);
-plot(X,Y,"r+");
-hold on;
-
 Ybis = X*w;
-plot(X,Ybis,"g*");
 
-disp('=DATA Beton==========================================================');
+if(FIG==1) then
+  figure("RED");
+  plot(X,Y,"r+");
+  hold on;
+  plot(X,Ybis,"g*");
+end
+
+
+
+
+disp('= DATA VIN ROUGE==========================================================');
+disp('nbDonnees = nombre de donnees')
 disp('MC = Erreur au sens des moindres carrés');
 disp('PC = Erreur en pourcentage');
-disp("==================Erreur Théorique===================================");
+disp('EC = Ecart moyen des notes avec les notes réelles');
+disp('E05 = nombre derreur de notation à 0.5 près');
+disp("================== Erreur Théorique ===================================");
+
+nbDonnees = datasize
 MC = erreurMC(Y,Ybis)
 PC = erreurP(Y,Ybis)
+EC = erreurEC(Y,Ybis)
+E05 = erreurE05(Y,Ybis)
 
-disp("==============================Erreur=================================");
+if DETAIL == 1 then
+disp("============================== Erreur =================================");
+end
 
 muMC = 0;
 muPC = 0;
+muEC = 0;
+muE05 = 0;
 
 for i=1 : PART
   [xapp yapp xval yval] = crossval(X,Y,PART,i);
@@ -99,26 +140,157 @@ for i=1 : PART
 
   ymodele = xapp*w2;
 
+if FIG == 1 then
   figure(i);
   plot(xval,yval,"b*");
   hold on;
-  plot(xval,ytrouve,"r+");
+  plot(xval,round(ytrouve),"r+");
+end
 
-  disp(i)
-  disp("=Erreur Apprentissage:");
-  MC = erreurMC(yapp,ymodele)
-  PC = erreurP(yapp,ymodele)
 
-  disp("=Erreur Test:");
-  MC = erreurMC(yval,ytrouve)
-  PC = erreurP(yval,ytrouve)
+  
+  MC = erreurMC(yapp,ymodele);
+  PC = erreurP(yapp,ymodele);
+  EC = erreurEC(yapp,ymodele);
+  E05 = erreurE05(yapp,ymodele);
+
+  if DETAIL == 1 then
+    disp(i)
+    disp("=Erreur Apprentissage:");
+    disp(MC);
+    disp(PC);
+    disp(EC);
+    disp(E05);
+  end
+ 
+
+  MC = erreurMC(yval,ytrouve);
+  PC = erreurP(yval,ytrouve);
+  EC = erreurEC(yval,ytrouve);
+  E05 = erreurE05(yval,ytrouve);
+
+  if DETAIL == 1 then
+    disp(i)
+    disp("=Erreur Test:");
+    disp(MC);
+    disp(PC);
+    disp(EC);
+    disp(E05);
+    disp("\n");
+  end
 
   muMC = MC + muMC;
   muPC = PC + muPC;
+  muEC = EC + muEC;
+  muE05 = E05 + muE05;
 
-  disp("\n");
+
+  
 end
 
-disp("===========================En moyenne ==============================");
+disp("=========================== En moyenne ==============================");
 MC = muMC/PART
 PC = muPC/PART
+EC = muEC/PART
+E05 = muE05/PART
+
+
+disp("\n");
+%%%%%%%%%%%%%%%%%%%%%%%%%%%VIN BLANC%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+w = (X2'*X2) \ (X2'*Y2);
+Ybis = X2*w;
+
+if(FIG==1) then
+  figure("WHITE");
+  plot(X2,Y2,"r+");
+  hold on;
+  plot(X2,Ybis,"g*");
+end
+
+
+
+
+disp('= DATA VIN BLANC==========================================================');
+disp('nbDonnees = nombre de donnees')
+disp('MC = Erreur au sens des moindres carrés');
+disp('PC = Erreur en pourcentage');
+disp('EC = Ecart moyen des notes avec les notes réelles');
+disp('E05 = nombre derreur de notation à 0.5 près');
+disp("================== Erreur Théorique ===================================");
+
+nbDonnees = datasize
+MC = erreurMC(Y2,Ybis)
+PC = erreurP(Y2,Ybis)
+EC = erreurEC(Y2,Ybis)
+E05 = erreurE05(Y2,Ybis)
+
+if DETAIL == 1 then
+disp("============================== Erreur =================================");
+end
+
+muMC = 0;
+muPC = 0;
+muEC = 0;
+muE05 = 0;
+
+for i=1 : PART
+  [xapp yapp xval yval] = crossval(X2,Y2,PART,i);
+
+  w2 = (xapp'*xapp)\(xapp'*yapp);
+  ytrouve = xval*w2;
+
+  ymodele = xapp*w2;
+
+if FIG == 1 then
+  figure(i);
+  plot(xval,yval,"b*");
+  hold on;
+  plot(xval,round(ytrouve),"r+");
+end
+
+
+  
+  MC = erreurMC(yapp,ymodele);
+  PC = erreurP(yapp,ymodele);
+  EC = erreurEC(yapp,ymodele);
+  E05 = erreurE05(yapp,ymodele);
+
+  if DETAIL == 1 then
+    disp(i)
+    disp("=Erreur Apprentissage:");
+    disp(MC);
+    disp(PC);
+    disp(EC);
+    disp(E05);
+  end
+ 
+
+  MC = erreurMC(yval,ytrouve);
+  PC = erreurP(yval,ytrouve);
+  EC = erreurEC(yval,ytrouve);
+  E05 = erreurE05(yval,ytrouve);
+
+  if DETAIL == 1 then
+    disp(i)
+    disp("=Erreur Test:");
+    disp(MC);
+    disp(PC);
+    disp(EC);
+    disp(E05);
+    disp("\n");
+  end
+
+  muMC = MC + muMC;
+  muPC = PC + muPC;
+  muEC = EC + muEC;
+  muE05 = E05 + muE05;
+
+
+  
+end
+
+disp("=========================== En moyenne ==============================");
+MC = muMC/PART
+PC = muPC/PART
+EC = muEC/PART
+E05 = muE05/PART
