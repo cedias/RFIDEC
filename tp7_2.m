@@ -60,7 +60,8 @@ endfunction
 % sauvegarder une image: print("-dpdf","image.pdf")
 
 %constante
-PART = 3;
+PART = 3; %nombre de divisions des données
+IMAGE = 1; %enregistrer les graphique /!\ ne fonctionne que pour PART = 3
 
 %programme
 data = load("data/donneesConcrete.dat");
@@ -78,6 +79,12 @@ hold on;
 
 Ybis = X*w;
 plot(X,Ybis,"g*");
+
+if IMAGE==1
+  print("-dpng","Beton-Modele.png")
+  print("-dpdf","Beton-Modele.pdf")
+end
+
 
 disp('=DATA Beton==========================================================');
 disp('MC = Erreur au sens des moindres carrés');
@@ -103,6 +110,24 @@ for i=1 : PART
   plot(xval,yval,"b*");
   hold on;
   plot(xval,ytrouve,"r+");
+  
+  if IMAGE==1
+    if i==1
+    print("-dpng","Beton-1.png")
+    print("-dpdf","Beton-1.pdf")
+    end
+
+    if i==2
+    print("-dpng","Beton-2.png")
+    print("-dpdf","Beton-2.pdf")
+    end
+
+    if i==3
+    print("-dpng","Beton-3.png")
+    print("-dpdf","Beton-3.pdf")
+    end
+  end
+
 
   disp(i)
   disp("=Erreur Apprentissage:");

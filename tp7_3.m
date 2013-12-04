@@ -66,17 +66,18 @@ function [erreurE05] = erreurE05(Y,Ybis)
   
   e(indexNe)=0;
   e(indexEr)=1;
-  erreurE05 = sum(e);
+  erreurE05 = (sum(e)/size(Y)(1))*100;
 endfunction
 
 
 %%%%%%%%%%%%%%%%%%%%%--vin---%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % sauvegarder une image: print("-dpdf","image.pdf")
 
-%constante
-PART = 50;
-FIG = 0;
-DETAIL = 0;
+%constante (1 = ON | 0 = OFF)
+PART = 3;
+FIG = 1;
+DETAIL = 1;
+IMAGE = 0; % fonctionne avec FIG = 1 UNIQUEMENT
 
 %programme
 dataRed = load("data/winequality-red.csv");
@@ -99,11 +100,13 @@ Y2 = data2(:,end);
 w = (X'*X) \ (X'*Y);
 Ybis = X*w;
 
-if(FIG==1) then
-  figure("RED");
+if(FIG==1) 
+  figure(42);
   plot(X,Y,"r+");
   hold on;
   plot(X,Ybis,"g*");
+  print("-dpdf","VR-Modele.pdf")
+  print("-dpng","VR-Modele.png")
 end
 
 
@@ -114,7 +117,7 @@ disp('nbDonnees = nombre de donnees')
 disp('MC = Erreur au sens des moindres carrés');
 disp('PC = Erreur en pourcentage');
 disp('EC = Ecart moyen des notes avec les notes réelles');
-disp('E05 = nombre derreur de notation à 0.5 près');
+disp('E05 = nombre derreur de notation à 0.5 près en pourcentage');
 disp("================== Erreur Théorique ===================================");
 
 nbDonnees = datasize
@@ -123,7 +126,7 @@ PC = erreurP(Y,Ybis)
 EC = erreurEC(Y,Ybis)
 E05 = erreurE05(Y,Ybis)
 
-if DETAIL == 1 then
+if DETAIL == 1
 disp("============================== Erreur =================================");
 end
 
@@ -140,12 +143,29 @@ for i=1 : PART
 
   ymodele = xapp*w2;
 
-if FIG == 1 then
+if FIG == 1 
   figure(i);
   plot(xval,yval,"b*");
   hold on;
-  plot(xval,round(ytrouve),"r+");
+  plot(xval,ytrouve,"r+");
 end
+
+if IMAGE==1
+    if i==1
+    print("-dpng","VR-1.png")
+    print("-dpdf","VR-1.pdf")
+    end
+
+    if i==2
+    print("-dpng","VR-2.png")
+    print("-dpdf","VR-2.pdf")
+    end
+
+    if i==3
+    print("-dpng","VR-3.png")
+    print("-dpdf","VR-3.pdf")
+    end
+  end
 
 
   
@@ -154,13 +174,13 @@ end
   EC = erreurEC(yapp,ymodele);
   E05 = erreurE05(yapp,ymodele);
 
-  if DETAIL == 1 then
+  if DETAIL == 1
     disp(i)
     disp("=Erreur Apprentissage:");
-    disp(MC);
-    disp(PC);
-    disp(EC);
-    disp(E05);
+    MC
+    PC
+    EC
+    E05
   end
  
 
@@ -169,13 +189,13 @@ end
   EC = erreurEC(yval,ytrouve);
   E05 = erreurE05(yval,ytrouve);
 
-  if DETAIL == 1 then
+  if DETAIL == 1 
     disp(i)
     disp("=Erreur Test:");
-    disp(MC);
-    disp(PC);
-    disp(EC);
-    disp(E05);
+    MC
+    PC
+    EC
+    E05
     disp("\n");
   end
 
@@ -200,8 +220,8 @@ disp("\n");
 w = (X2'*X2) \ (X2'*Y2);
 Ybis = X2*w;
 
-if(FIG==1) then
-  figure("WHITE");
+if(FIG==1) 
+  figure(43)
   plot(X2,Y2,"r+");
   hold on;
   plot(X2,Ybis,"g*");
@@ -224,7 +244,7 @@ PC = erreurP(Y2,Ybis)
 EC = erreurEC(Y2,Ybis)
 E05 = erreurE05(Y2,Ybis)
 
-if DETAIL == 1 then
+if DETAIL == 1 
 disp("============================== Erreur =================================");
 end
 
@@ -241,12 +261,29 @@ for i=1 : PART
 
   ymodele = xapp*w2;
 
-if FIG == 1 then
+if FIG == 1 
   figure(i);
   plot(xval,yval,"b*");
   hold on;
-  plot(xval,round(ytrouve),"r+");
+  plot(xval,ytrouve,"r+");
 end
+
+if IMAGE==1
+    if i==1
+    print("-dpng","VB-1.png")
+    print("-dpdf","VB-1.pdf")
+    end
+
+    if i==2
+    print("-dpng","VB-2.png")
+    print("-dpdf","VB-2.pdf")
+    end
+
+    if i==3
+    print("-dpng","VB-3.png")
+    print("-dpdf","VB-3.pdf")
+    end
+  end
 
 
   
@@ -255,13 +292,13 @@ end
   EC = erreurEC(yapp,ymodele);
   E05 = erreurE05(yapp,ymodele);
 
-  if DETAIL == 1 then
+  if (DETAIL == 1) 
     disp(i)
     disp("=Erreur Apprentissage:");
-    disp(MC);
-    disp(PC);
-    disp(EC);
-    disp(E05);
+    MC
+    PC
+    EC
+    E05
   end
  
 
@@ -270,13 +307,13 @@ end
   EC = erreurEC(yval,ytrouve);
   E05 = erreurE05(yval,ytrouve);
 
-  if DETAIL == 1 then
+  if DETAIL == 1 
     disp(i)
     disp("=Erreur Test:");
-    disp(MC);
-    disp(PC);
-    disp(EC);
-    disp(E05);
+    MC
+    PC
+    EC
+    E05
     disp("\n");
   end
 
