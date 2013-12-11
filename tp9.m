@@ -27,7 +27,7 @@ clear all;
  xgrid = generateGrid(xapp,100);
  sizeXapp = size(xapp);
  w = zeros(sizeXapp(2),1); 
-
+ 
  for i=0:niter
  	
  	indeX=floor(rand(1)*100+1);
@@ -37,28 +37,29 @@ clear all;
  	if (yi*xi*w <= 0)
  		w = w + epsilon*yi*xi';
  		plot(xapp(yapp==1,1), xapp(yapp==1,2), '+');
-		 hold on;
-		 plot(xapp(yapp==-1,1), xapp(yapp==-1,2), 'ro');
-		 ygrid = xgrid*w;
-		 plotFrontiere(xgrid, ygrid);
-		 hold off; % pour que l'itération suivante écrase la précédente
-		 drawnow % pour forcer l'affichage maintenant
-		 sleep(0.1);
+		hold on;
+		plot(xapp(yapp==-1,1), xapp(yapp==-1,2), 'ro');
+		ygrid = xgrid*w;
+		plotFrontiere(xgrid, ygrid);
+		hold off; % pour que l'itération suivante écrase la précédente
+		drawnow % pour forcer l'affichage maintenant
+		sleep(0.1);
  	end
-
-
- 
-
-
  end
 
  vect = w;
+
  endfunction
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 
  napp = 100;
  ntest = 1000;
  bruit = 0.35;
  [xapp,yapp,xtest,ytest] = dataset('gaussian', napp, ntest, bruit);
+
+
+
  figure
  plot(xapp(yapp==1,1), xapp(yapp==1,2), '+');
  hold on;
