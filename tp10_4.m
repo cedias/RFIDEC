@@ -1,20 +1,23 @@
 close all;
 clear all;
- %Exercice tp9_2
+ %Exercice n°tp10_4
 
- function [vect] = perceptron(xapp,yapp,epsilon,niter)
+
+ function [vect] = SVM(xapp,yapp,epsilon,lbd,niter)
  sizeXapp = size(xapp);
  w = zeros(sizeXapp(2),1); 
 
  for i=0:niter
- 	indeX=floor(rand(1)*sizeXapp(1)+1);
-
+ 	
+ 	indeX=ceil(rand(1)*size(xapp,1));
  	xi = xapp(indeX,:);
  	yi = yapp(indeX);
  	
- 	if (yi*xi*w <= 0)
+ 	if (yi*xi*w < 1)
  		w = w + epsilon*yi*xi';
  	end
+ 		w = w-2*epsilon*lbd*w;
+
  end
 
  vect = w;
@@ -34,8 +37,10 @@ end
  modeles = [];
 for(i=1:10) 
 	ytmp = yapp;
+	
 	ytmp(ytmp != i) = -1;
-	modeles = [modeles perceptron(xapp,ytmp,0.01,1000)];
+	ytmp(ytmp == i) = 1;
+	modeles = [modeles SVM(xapp,ytmp,0.01,0.1,1000)];
 end
 allA = xapp*modeles;
 [val,indA] = max(allA,[],2);
@@ -60,7 +65,8 @@ end
 x= xapp(yapp==1|yapp==2,:);
 y= yapp(yapp==1|yapp==2,:);
 y(y==2)=-1;
-w = perceptron(x,y,0.01,1000);
+y(y==1)=1;
+w = SVM(x,y,0.01,0.1,1000);
 figure
 imagesc(reshape(w,16,16)');
 
